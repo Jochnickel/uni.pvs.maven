@@ -3,7 +3,7 @@
   <groupId>de.uulm.sp.pvs</groupId>
   <artifactId>sokoban</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>sokoban</name>
   <url>http://maven.apache.org</url>
 
