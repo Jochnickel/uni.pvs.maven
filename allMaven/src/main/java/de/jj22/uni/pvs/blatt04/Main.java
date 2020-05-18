@@ -1,18 +1,20 @@
 package de.jj22.uni.pvs.blatt04;
 
 import java.io.BufferedReader;
+import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class Main 
 {
 	public static void main( String[] args )
 	{
-		final long time1 = getExecutionTime(calcSumFromFileLines1, args);
+		final long time1 = getExecutionTime(()->calcSumFromFileLines1(), args);
 	}
 
-	public static long getExecutionTime(Function f, Object ...args){
+	public static long getExecutionTime(Consumer f, Object ...args){
 		final long startTime = System.currentTimeMillis();
-		f(args);
+		f.accept(args);
 		return System.currentTimeMillis() - startTime;
 	}
 
