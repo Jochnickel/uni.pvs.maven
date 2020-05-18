@@ -1,4 +1,4 @@
-package de.uulm.sp.pvs;
+package de.uulm.sp.pvs.sokoban;
 
 public class SokobanBoards {
     public static char[][] getDefaultBoard(){

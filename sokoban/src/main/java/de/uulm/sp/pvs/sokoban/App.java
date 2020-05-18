@@ -1,4 +1,4 @@
-package de.uulm.sp.pvs;
+package de.uulm.sp.pvs.sokoban;
 
 import java.io.IOException;
 import java.util.Objects;
