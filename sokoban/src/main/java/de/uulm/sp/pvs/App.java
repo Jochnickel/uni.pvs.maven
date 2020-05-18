@@ -1,5 +1,7 @@
 package de.uulm.sp.pvs;
 
+import de.uulm.sp.pvs.util.Sokoban;
+
 /**
  * Hello world!
  *
@@ -8,6 +10,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        Sokoban game = new Sokoban();
     }
 }
