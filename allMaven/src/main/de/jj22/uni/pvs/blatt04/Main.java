@@ -7,7 +7,7 @@ public class Main
 {
 	public static void main( String[] args )
 	{
-		final long time1 = getExecutionTime(calc, args)
+		final long time1 = getExecutionTime(calcSumFromFileLines1, args);
 	}
 
 	public static long getExecutionTime(Function f, Object ...args){
