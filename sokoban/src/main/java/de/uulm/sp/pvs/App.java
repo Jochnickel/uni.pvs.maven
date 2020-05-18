@@ -10,11 +10,12 @@ public class App {
 
 	private final static String[] WASD = { "W", "A", "S", "D" };
 	private final static String[] NWSE = { "N", "W", "S", "E" };
+	private final static String EXIT_KEY = "X";
+	private final static String TOGGLE = " ";
 	/**
 	 * 4 letters to control the player, counterclockwise, starting with up.
 	 */
 	private static String[] movementKeys = NWSE;
-	private static String exitKey = "X";
 
 	public static void main(String[] args) throws IOException {
 		final var board = SokobanBoards.getDefaultBoard();
@@ -22,20 +23,27 @@ public class App {
 		printBoardAndAskForInput(board);
 		{
 			Scanner scanner = new Scanner(System.in);
-			for (String stdInput = scanner.next();; stdInput = scanner.next()) {
+			scanner.useDelimiter("");
+			for (String stdInput = String.valueOf(scanner.next().charAt(0));; stdInput = scanner.next()) {
 				try {
 					moveByKeyboardInt(stdInput, board);
+					printBoardAndAskForInput(board);
 				} catch (Exception e) {
-					if (stdInput == exitKey) {
-						scanner.close();
-						System.out.println("Bye");
-						System.exit(0);
+					switch (stdInput) {
+						case "\n":
+							break;
+						case EXIT_KEY:
+							scanner.close();
+							System.out.println("Bye");
+							System.exit(0);
+						case TOGGLE:
+							toggleControls();
+							break;
+						default:
+							System.err.print("Invalid input. ");
 					}
-					System.err.print("Invalid input. ");
 					printAskForInput();
-					continue;
 				}
-				printBoardAndAskForInput(board);
 			}
 		}
 	}
@@ -55,11 +63,13 @@ public class App {
 		}
 	}
 
-	static void toggleControls(){
-		if (WASD==movementKeys){
+	static void toggleControls() {
+		if (WASD == movementKeys) {
 			movementKeys = NWSE;
-		} else if(NWSE == movementKeys){
+			System.out.println("Controls: NWSE");
+		} else if (NWSE == movementKeys) {
 			movementKeys = WASD;
+			System.out.println("Controls: WASD");
 		} else {
 			System.err.println("Error toggling keyboard layout");
 		}
