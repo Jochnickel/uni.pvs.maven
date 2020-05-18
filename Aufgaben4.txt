@@ -1,0 +1,6 @@
+1. Einlesen mit Scanner und BufferedReader
+3)
+5593ms mit Scanner
+453ms mit BufferedReader
+-> der BufferedReader war um das 10-fache Schneller. Das liegt wohl daran, dass der Scanner intern mit Regular Expressions arbeitet, also eine „Schablone" auf den Text legt und nach Whitespaces sucht (also nach unterschiedlichen Unterbrechungen, Leertaste, Zeilenumbruch sucht), während der BufferedReader die Zeilen direkt versucht als Integer zu lesen.
+Zudem könnte die Bufferung des BufferedReaders einen Vorteil ausmachen, dadurch kann die komplette Textdatei ins Programm geladen werden und somit die (zeitintensiven) Systemaufrufe (Datei öffnen, lesen) reduziert werden.
