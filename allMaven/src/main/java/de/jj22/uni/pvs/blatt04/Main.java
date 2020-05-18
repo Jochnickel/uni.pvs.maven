@@ -9,7 +9,8 @@ public class Main
 {
 	public static void main( String[] args )
 	{
-		final long time1 = getExecutionTime(()->calcSumFromFileLines1(), args);
+		Consumer<String> foo1 = (args) -> calcSumFromFileLines1();
+		final long time1 = getExecutionTime(()->{calcSumFromFileLines1()}, args);
 	}
 
 	public static long getExecutionTime(Consumer f, Object ...args){
