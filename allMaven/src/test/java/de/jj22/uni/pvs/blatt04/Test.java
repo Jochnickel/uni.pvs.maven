@@ -12,7 +12,7 @@ public class Test
     /**
      * Rigorous Test :-)
      */
-    @Test
+    // @Test
     public void shouldAnswerWithTrue()
     {
         assertTrue( true );

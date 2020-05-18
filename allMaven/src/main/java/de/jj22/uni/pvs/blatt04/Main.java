@@ -4,22 +4,24 @@ import java.io.BufferedReader;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.function.ToLongFunction;
 
 public class Main 
 {
 	public static void main( String[] args )
 	{
-		Consumer<String> foo1 = (args) -> calcSumFromFileLines1();
+		String fn = "bigInput.txt";
+		ToLongFunction<String> foo1 = (filename) -> {calcSumFromFileLines1(filename);};
 		final long time1 = getExecutionTime(()->{calcSumFromFileLines1()}, args);
 	}
 
-	public static long getExecutionTime(Consumer f, Object ...args){
+	public static long getExecutionTime(Consumer f, Object... args) {
 		final long startTime = System.currentTimeMillis();
 		f.accept(args);
 		return System.currentTimeMillis() - startTime;
 	}
 
-	public static calcSumFromFileLines1(String filename){
+	public static long calcSumFromFileLines1(String filename){
 		Scanner sc = new Scanner(new FileInputStream(filename));
 		long sum = 0;
 		while (sc.hasNextInt()){
@@ -28,7 +30,7 @@ public class Main
 		return sum;
 	}
 
-	public static calcSumFromFileLines2(String filename){
+	public static long calcSumFromFileLines2(String filename){
 		BufferedReader br = new BufferedReader(new FileInputStream(filename));
 		long sum = 0;
 		while (br.ready()){
