@@ -24,12 +24,12 @@ public class Main {
 				throw new Error(e);
 			}
 		}, "bigInput.txt");
-		System.out.format("Calculated %d in %d seconds with Scanner\n", time1[1], time1[0]);
-		System.out.format("Calculated %d in %d seconds with String to Long\n", time2[1], time2[0]);
+		System.out.format("Calculated %d in %d ms with Scanner\n", time1[1],time1[0]);
+		System.out.format("Calculated %d in %d ms with parseInt\n", time2[1], time2[0]);
 	}
 
 	/*
-	* @return ExecutionTime, Result
+	* @return Execution Time, Result
 	*/
 	public static long[] getExecutionTime(ToLongFunction<String> strToLongFunc, String str) {
 		final long startTime = System.currentTimeMillis();
@@ -37,7 +37,9 @@ public class Main {
 		final long execTime = System.currentTimeMillis() - startTime;
 		return new long[] { execTime, result };
 	}
-
+	/*
+	* Method using Scanner, nextInt
+	*/
 	public static long calcSumFromFileLines1(String filename) throws FileNotFoundException {
 		Scanner sc = new Scanner(new FileInputStream(filename));
 		long sum = 0;
@@ -47,6 +49,9 @@ public class Main {
 		return sum;
 	}
 
+	/*
+	* Method using BufferedReader, parseInt
+	*/
 	public static long calcSumFromFileLines2(String filename) throws FileNotFoundException, IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		long sum = 0;
