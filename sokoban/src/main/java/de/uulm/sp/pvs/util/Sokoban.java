@@ -11,7 +11,7 @@ public class Sokoban {
   public static Pair<Integer, Integer> findPlayer(char[][] gameBoard) {
 
     for (int row = 0; row < gameBoard.length; row++) {
-      for (int column = 0; column < gameBoard.length; column++) {
+      for (int column = 0; column < gameBoard[row].length; column++) {
         if (gameBoard[row][column] == '@') {
           return new Pair<>(row, column);
         }
