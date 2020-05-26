@@ -10,11 +10,18 @@ public class SokobanLevel {
     final String name;
     Difficulty difficulty;
 
-    SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException {
-        if (isValidXML(pathToXML)){}
+    public SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException {
+        if (isValidXML(pathToXML)){
+            var domRoot = "null";
+            board = null;
+            name = null;
+            difficulty = null;
+        } else {
+            throw new InvalidFileException();
+        }
     }
 
-    static boolean isValidXML(String pathToXML, String pathToXSD) throws FileNotFoundException {
+    static boolean isValidXML(String pathToXML) throws FileNotFoundException {
         
         return false;
     }
