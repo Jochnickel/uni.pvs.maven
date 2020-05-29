@@ -10,6 +10,8 @@ public class Sokoban {
 	final private static char BOX_FIELD = '$';
 	final private static char PLAYER_FIELD = '@';
 	final private static char TARGET_FIELD = '.';
+	final private static char PLAYER_AND_TARGET_FIELD = '+';
+	final private static char SOLVED_FIELD = '*';
 
 	public static void main(String[] args) {
 		char[][] sokoban = getDefaultField();
@@ -41,7 +43,7 @@ public class Sokoban {
 	public static Pair<Integer, Integer> findPlayer(char[][] board) {
 		for (int y = board.length - 1; y > 0; y--) {
 			for (int x = board[y].length - 1; x > 0; x--) {
-				if (PLAYER_FIELD == board[y][x]) {
+				if (PLAYER_FIELD == board[y][x] || PLAYER_AND_TARGET_FIELD == board[y][x]) {
 					return new Pair<Integer, Integer>(x, y);
 				}
 			}
@@ -49,7 +51,8 @@ public class Sokoban {
 		return null;
 	}
 
-	private static void setField(char[][] board, Pair<Integer, Integer> pos, char newChar) throws IndexOutOfBoundsException {
+	private static void setField(char[][] board, Pair<Integer, Integer> pos, char newChar)
+			throws IndexOutOfBoundsException {
 		board[pos.getSecond()][pos.getFirst()] = newChar;
 	}
 
@@ -78,7 +81,7 @@ public class Sokoban {
 							setField(board, twoAheadPos, BOX_FIELD);
 							break;
 						case TARGET_FIELD:
-							setField(board, twoAheadPos, EMPTY_FIELD);
+							setField(board, twoAheadPos, SOLVED_FIELD);
 							break;
 						default:
 							return false;
@@ -90,15 +93,27 @@ public class Sokoban {
 					 */
 				}
 				setField(board, newPos, PLAYER_FIELD);
-				setField(board, oldPos, EMPTY_FIELD);
-				return true;
+				break;
 			case EMPTY_FIELD:
 				setField(board, newPos, PLAYER_FIELD);
-				setField(board, oldPos, EMPTY_FIELD);
-				return true;
+				break;
+			case TARGET_FIELD:
+				setField(board, newPos, PLAYER_AND_TARGET_FIELD);
+				break;
 			default:
 				return false;
 		}
+		switch (getField(board, oldPos)) {
+			case PLAYER_AND_TARGET_FIELD:
+				setField(board, oldPos, TARGET_FIELD);
+				break;
+			case PLAYER_FIELD:
+				setField(board, oldPos, EMPTY_FIELD);
+				break;
+			default:
+				break;
+		}
+		return true;
 	}
 
 	public static boolean moveNorth(char[][] board) {
