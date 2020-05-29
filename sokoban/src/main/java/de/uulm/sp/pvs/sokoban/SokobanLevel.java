@@ -26,6 +26,10 @@ public class SokobanLevel {
     final String name;
     final Difficulty difficulty;
 
+    public static void main(String[] args) throws FileNotFoundException, InvalidFileException {
+        var a = new SokobanLevel("Sokoban-B.xml");
+    }
+
     public SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException {
         // load XSD
         try {
@@ -40,11 +44,17 @@ public class SokobanLevel {
         // load XML
         var domRoot = loadLevelFromXML(validator, pathToXML);
         // parse the XML
-        difficulty = Difficulty.valueOf(domRoot.getElementsByTagName("Difficulty").item(0).getTextContent());
+        difficulty = (null != domRoot.getElementsByTagName("Difficulty").item(0))
+                ? Difficulty.valueOf(domRoot.getElementsByTagName("Difficulty").item(0).getTextContent())
+                : null;
         final var authorList = domRoot.getElementsByTagName("Author");
-        for (int i = 0; i < authorList.getLength(); authors.add(authorList.item(i++).getTextContent())) {
+        if (null != authorList) {
+            for (int i = 0; i < authorList.getLength(); authors.add(authorList.item(i++).getTextContent())) {
+            }
         }
-        name = domRoot.getElementsByTagName("LevelName").item(0).getTextContent();
+        name = (null != domRoot.getElementsByTagName("LevelName").item(0))
+                ? domRoot.getElementsByTagName("LevelName").item(0).getTextContent()
+                : null;
         board = domNodeToBoard(domRoot.getElementsByTagName("LevelData").item(0));
     }
 
@@ -53,7 +63,8 @@ public class SokobanLevel {
         final int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getTextContent());
         final String cleanLevelString = node.getTextContent().replace("\n", "");
         final char[][] board = new char[height][width];
-        if (cleanLevelString.length()!=width*height) throw new InvalidFileException("width*height doesnt match String");
+        if (cleanLevelString.length() != width * height)
+            throw new InvalidFileException("width*height doesnt match String");
         for (int i = 0, h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 board[h][w] = cleanLevelString.charAt(i++);
@@ -69,7 +80,7 @@ public class SokobanLevel {
             return DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().parse(pathToXML)
                     .getDocumentElement();
         } catch (SAXException e) {
-            throw new InvalidFileException(pathToXML + " doesn't fulfill the schema.");
+            throw new InvalidFileException(pathToXML + " doesn't fulfill the schema." + e);
         } catch (ParserConfigurationException e) {
             throw new InvalidFileException("ParserConfigurationException occurred.");
         } catch (IOException e) {

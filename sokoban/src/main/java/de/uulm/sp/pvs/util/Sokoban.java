@@ -94,6 +94,26 @@ public class Sokoban {
 				}
 				setField(board, newPos, PLAYER_FIELD);
 				break;
+			case SOLVED_FIELD:
+				try {
+					switch (getField(board, twoAheadPos)) {
+						case EMPTY_FIELD:
+							setField(board, twoAheadPos, BOX_FIELD);
+							break;
+						case TARGET_FIELD:
+							setField(board, twoAheadPos, SOLVED_FIELD);
+							break;
+						default:
+							return false;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					/*
+					 * man kann Kisten auch aus dem Spielfeld rausschieben. Habe dies aus der
+					 * "Grafik" entnommen, sonst wären da keine Wände am Rand.
+					 */
+				}
+				setField(board, newPos, PLAYER_AND_TARGET_FIELD);
+				break;
 			case EMPTY_FIELD:
 				setField(board, newPos, PLAYER_FIELD);
 				break;
