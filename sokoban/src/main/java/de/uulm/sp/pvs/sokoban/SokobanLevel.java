@@ -8,68 +8,76 @@ import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Source;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class SokobanLevel {
     private static String xsdFileName = "sokoban.xsd";
     private static Validator validator = null;
 
-    List<String> authors = new ArrayList<String>();
-    char[][] board;
-    String name;
-    Difficulty difficulty;
+    final List<String> authors = new ArrayList<String>();
+    final char[][] board;
+    final String name;
+    final Difficulty difficulty;
 
-    public SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException, Exception {
-        if (isValidXML(pathToXML)) {
-            var domRoot = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().parse(pathToXML).getDocumentElement(); // can throw 3 exceptions
-            var children = domRoot.getChildNodes();
-            for (int iNode = children.getLength()-1; 0 < iNode; iNode--) {
-                var child = children.item(iNode);
-                if("Difficulty".equals(child.getNodeName())) {
-                    switch (child.getTextContent()) {
-                        case "EASY":
-                            difficulty = Difficulty.EASY;
-                            break;
-                        case "MEDIUM":
-                            difficulty = Difficulty.MEDIUM;
-                            break;
-                        case "HARD":
-                            difficulty = Difficulty.HARD;
-                            break;
-                        case "IMPOSSIBLE":
-                            difficulty = Difficulty.IMPOSSIBLE;
-                            break;
-                        default:
-                            throw new InvalidFileException("Parsing difficulty went wrong.");
-                    }
-                } else if ("LevelName".equals(child.getNodeName())){
-                    this.name = child.getNodeValue();
-                } else if ("LevelData".equals(child.getNodeName())){
-                    var attrs = child.getAttributes();
-                    var width = Integer.parseInt(attrs.getNamedItem("width").getNodeValue());
-                    var height = Integer.parseInt(attrs.getNamedItem("height").getNodeValue());
-                    var levelString = child.getTextContent().replace("\n", "");
-                    try{
-                        board = new char[width][height];
-                        for (int i = 0, w = 0; w < board.length; w++) {
-                            for (int h = 0; h < board.length; h++) {
-                                board[w][h] = levelString.charAt(i);
-                            }
-                        }
-                    } catch (IndexOutOfBoundsException e){
-                        System.err.println("Board height/width corrupted");
-                    }
-                } else if ("Author".equals(child.getNodeName())){
-                    authors.add(child.getTextContent());
-                }
+    public SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException {
+        // load XSD
+        try {
+            validator = loadValidator();
+        } catch (FileNotFoundException | InvalidFileException e) {
+            if (null == validator) {
+                throw e;
+            } else {
+                System.err.printf("Error reading %s again. Using known validator\n", xsdFileName);
             }
-        } else {
-            throw new InvalidFileException();
+        }
+        // load XML
+        var domRoot = loadLevelFromXML(validator, pathToXML);
+        // parse the XML
+        try {
+            difficulty = Difficulty.valueOf(domRoot.getElementsByTagName("Difficulty").item(0).getTextContent());
+            final var authorList = domRoot.getElementsByTagName("Author");
+            for (int i = 0; i < authorList.getLength(); authors.add(authorList.item(i++).getTextContent())) {
+            }
+            name = domRoot.getElementsByTagName("LevelName").item(0).getTextContent();
+            board = domNodeToBoard(domRoot.getElementsByTagName("LevelData").item(0));
+        } catch (Exception e) {
+            throw new InvalidFileException(
+                    pathToXML + " parsing Error occured. " + xsdFileName + " seems to be unsuitable.");
+        }
+    }
+
+    private char[][] domNodeToBoard(Node node) {
+        final int height = Integer.parseInt(node.getAttributes().getNamedItem("height").getTextContent());
+        final int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getTextContent());
+        final String cleanLevelString = node.getTextContent().replace("\n", "");
+        final char[][] board = new char[height][width];
+        for (int i = 0, h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                board[h][w] = cleanLevelString.charAt(i++);
+            }
+        }
+        return board;
+    }
+
+    private Element loadLevelFromXML(Validator validator2, String pathToXML)
+            throws InvalidFileException, FileNotFoundException {
+        // TODO: validate
+        try {
+            return DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().parse(pathToXML)
+                    .getDocumentElement();
+        } catch (SAXException e) {
+            throw new InvalidFileException(pathToXML + " doesn't fulfill the schema.");
+        } catch (ParserConfigurationException e) {
+            throw new InvalidFileException("ParserConfigurationException occurred.");
+        } catch (IOException e) {
+            throw new FileNotFoundException(e.getMessage());
         }
     }
 
@@ -77,7 +85,7 @@ public class SokobanLevel {
         xsdFileName = fileName;
     }
 
-    private static Validator getValidator() throws InvalidFileException, FileNotFoundException {
+    private static Validator loadValidator() throws InvalidFileException, FileNotFoundException {
         try {
             return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
                     .newSchema(new StreamSource(new FileInputStream(xsdFileName))).newValidator();
@@ -86,28 +94,4 @@ public class SokobanLevel {
         }
     }
 
-    public static boolean isValidXML(String pathToXML) throws FileNotFoundException, InvalidFileException {
-        var validator = getValidator();
-        Source xmlFile = new StreamSource(pathToXML);
-        try {
-            validator.validate(xmlFile);
-            return true;
-        } catch (SAXException e) {
-            return false;
-        } catch (IOException e) {
-            throw new InvalidFileException();
-        }
-    }
-
-    public static class InvalidFileException extends Exception {
-        public InvalidFileException() {
-            super();
-        }
-
-        public InvalidFileException(String s) {
-            super(s);
-        }
-
-        private static final long serialVersionUID = 1L;
-    }
 }
