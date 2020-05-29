@@ -1,147 +1,138 @@
 package de.uulm.sp.pvs.util;
 
 public class Sokoban {
+	private static Pair<Integer, Integer> NORTH = new Pair<Integer, Integer>(0, 1);
+	private static Pair<Integer, Integer> SOUTH = new Pair<Integer, Integer>(0, -1);
+	private static Pair<Integer, Integer> WEST = new Pair<Integer, Integer>(-1, 0);
+	private static Pair<Integer, Integer> EAST = new Pair<Integer, Integer>(1, 0);
 
-  /**
-   * Finds @ inside a 2D char array
-   * 
-   * @param gameBoard char array to check
-   * @return Pair containing X and Y coordinates of @ (-1,-1) if non existent
-   */
-  public static Pair<Integer, Integer> findPlayer(char[][] gameBoard) {
+	final private static char EMPTY_FIELD = ' ';
+	final private static char BOX_FIELD = '$';
+	final private static char PLAYER_FIELD = '@';
+	final private static char TARGET_FIELD = '.';
 
-    for (int row = 0; row < gameBoard.length; row++) {
-      for (int column = 0; column < gameBoard[row].length; column++) {
-        if (gameBoard[row][column] == '@') {
-          return new Pair<>(row, column);
-        }
-      }
-    }
-    return new Pair<>(-1, -1);
-  }
+	public static void main(String[] args) {
+		char[][] sokoban = getDefaultField();
+		System.out.println(sokobanToString(sokoban));
+		moveNorth(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveEast(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveSouth(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveSouth(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveSouth(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveSouth(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveSouth(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveEast(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveSouth(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveEast(sokoban);
+		System.out.println(sokobanToString(sokoban));
+		moveWest(sokoban);
+		System.out.println(sokobanToString(sokoban));
+	}
 
-  /**
-   * Enum for representing cardinal points.
-   * 
-   * @author stefan
-   *
-   */
-  private static enum CardinalPoint {
-    NORTH, EAST, SOUTH, WEST
-  }
+	public static Pair<Integer, Integer> findPlayer(char[][] board) {
+		for (int y = board.length - 1; y > 0; y--) {
+			for (int x = board[y].length - 1; x > 0; x--) {
+				if (PLAYER_FIELD == board[y][x]) {
+					return new Pair<Integer, Integer>(x, y);
+				}
+			}
+		}
+		return null;
+	}
 
-  /**
-   * Move @ within charArray one up
-   * 
-   * @param gameBoard
-   * @return true if it was possible false if it wasn't
-   */
-  public static boolean moveNorth(char[][] gameBoard) {
-    return moveDirection(CardinalPoint.NORTH, gameBoard);
-  }
+	private static void setField(char[][] board, Pair<Integer, Integer> pos, char newChar) throws IndexOutOfBoundsException {
+		board[pos.getSecond()][pos.getFirst()] = newChar;
+	}
 
-  /**
-   * Move @ within charArray one to the right
-   * 
-   * @param gameBoard
-   * @return true if it was possible false if it wasn't
-   */
-  public static boolean moveEast(char[][] gameBoard) {
-    return moveDirection(CardinalPoint.EAST, gameBoard);
-  }
+	private static char getField(char[][] board, Pair<Integer, Integer> pos) throws IndexOutOfBoundsException {
+		return board[pos.getSecond()][pos.getFirst()];
+	}
 
-  /**
-   * Move @ within charArray one down
-   * 
-   * @param gameBoard
-   * @return true if it was possible false if it wasn't
-   */
-  public static boolean moveSouth(char[][] gameBoard) {
-    return moveDirection(CardinalPoint.SOUTH, gameBoard);
-  }
+	private static boolean move(char[][] board, Pair<Integer, Integer> direction /* relative Position to current */) {
+		final var oldPos = findPlayer(board);
+		final var newPos = new Pair<Integer, Integer>(oldPos.getFirst() + direction.getFirst(),
+				oldPos.getSecond() + direction.getSecond());
+		final var twoAheadPos = new Pair<Integer, Integer>(newPos.getFirst() + direction.getFirst(),
+				newPos.getSecond() + direction.getSecond());
+		final char charAtNewPos;
+		try {
+			charAtNewPos = getField(board, newPos);
+		} catch (IndexOutOfBoundsException e) {
+			return false;
+		}
 
-  /**
-   * Move @ within charArray one to the left
-   * 
-   * @param gameBoard
-   * @return true if it was possible false if it wasn't
-   */
-  public static boolean moveWest(char[][] gameBoard) {
-    return moveDirection(CardinalPoint.WEST, gameBoard);
-  }
+		switch (charAtNewPos) {
+			case BOX_FIELD:
+				try {
+					switch (getField(board, twoAheadPos)) {
+						case EMPTY_FIELD:
+							setField(board, twoAheadPos, BOX_FIELD);
+							break;
+						case TARGET_FIELD:
+							setField(board, twoAheadPos, EMPTY_FIELD);
+							break;
+						default:
+							return false;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					/*
+					 * man kann Kisten auch aus dem Spielfeld rausschieben. Habe dies aus der
+					 * "Grafik" entnommen, sonst wären da keine Wände am Rand.
+					 */
+				}
+				setField(board, newPos, PLAYER_FIELD);
+				setField(board, oldPos, EMPTY_FIELD);
+				return true;
+			case EMPTY_FIELD:
+				setField(board, newPos, PLAYER_FIELD);
+				setField(board, oldPos, EMPTY_FIELD);
+				return true;
+			default:
+				return false;
+		}
+	}
 
+	public static boolean moveNorth(char[][] board) {
+		return move(board, NORTH);
+	}
 
-  /**
-   * Move @ within char array in specific direction
-   * 
-   * @param direction which direction to move
-   * @param gameBoard
-   * @return true if it was possible, false if it was not.
-   */
-  private static boolean moveDirection(CardinalPoint direction, char[][] gameBoard) {
-    // Fetch current player position if illegal exit
-    var playerPosition = findPlayer(gameBoard);
-    if (playerPosition.getFirst() <= -1 || playerPosition.getSecond() <= -1)
-      return false;
+	public static boolean moveSouth(char[][] board) {
+		return move(board, SOUTH);
+	}
 
-    // Initialise variables for representing X and Y coordinates of player.
-    int playerX = playerPosition.getFirst();
-    int playerY = playerPosition.getSecond();
+	public static boolean moveWest(char[][] board) {
+		return move(board, WEST);
+	}
 
-    // Define movement of player based on @direction.
-    int xMovement = 0;
-    int yMovement = 0;
-    switch (direction) {
-      case NORTH:
-        xMovement = -1;
-        break;
-      case EAST:
-        yMovement = 1;
-        break;
-      case SOUTH:
-        xMovement = 1;
-        break;
-      case WEST:
-        yMovement = -1;
-        break;
-    }
-    // Future player position.
-    int playerXNext = playerX + xMovement;
-    int playerYNext = playerY + yMovement;
-    // Future position of object in front of player.
-    int playerXNextNext = playerX + 2 * xMovement;
-    int playerYNextNext = playerY + 2 * yMovement;
+	public static boolean moveEast(char[][] board) {
+		return move(board, EAST);
+	}
 
-    // Move player and object in front of player in accordance with game rules.
-    if (playerXNext > -1 && playerYNext > -1 && gameBoard[playerXNext][playerYNext] == '.') {
-      gameBoard[playerXNext][playerYNext] = '@';
-      gameBoard[playerX][playerY] = '.';
-      return true;
-    } else if (playerXNextNext > -1 && playerYNextNext > -1
-        && gameBoard[playerXNext][playerYNext] == '$'
-        && gameBoard[playerXNextNext][playerYNextNext] == '.') {
-      gameBoard[playerXNext][playerYNext] = '@';
-      gameBoard[playerXNextNext][playerYNextNext] = '$';
-      gameBoard[playerX][playerY] = '.';
-      return true;
-    } else {
-      return false;
-    }
-  }
+	public static String sokobanToString(char[][] board) {
+		String out = "";
+		for (int i = board.length - 1; 0 <= i; i--) {
+			out += new String(board[i]);
+			out += '\n';
+		}
+		return out;
+	}
 
-  /**
-   * transforms 2D char array into single string with \n between each line.
-   * 
-   * @param gameBoard
-   * @return string
-   */
-  public static String sokobanToString(char[][] gameBoard) {
-    var stringRepresentation = "";
-    for (int i = 0; i < gameBoard.length; i++) {
-      stringRepresentation += new String(gameBoard[i]) + "\n";
-    }
-
-    return stringRepresentation;
-  }
+	public static char[][] getDefaultField() {
+		return new char[][] { { '#', '#', '#', '#', '#', '#', '#' }, { '#', '.', '.', '.', '.', '.', '#' },
+				{ '#', '.', '.', '.', '.', '.', '#' }, { '#', '.', '.', '.', '.', '.', '#' },
+				{ '#', '.', '.', '$', '.', '.', '#' }, { '#', '.', '$', '@', '$', '.', '#' },
+				{ '#', '.', '.', '$', '.', '.', '#' }, { '#', '.', '.', '.', '.', '.', '#' },
+				{ '#', '.', '.', '.', '.', '.', '#' }, { '#', '.', '.', '.', '.', '.', '#' },
+				{ '#', '#', '#', '#', '#', '#', '#' } };
+	}
 
 }

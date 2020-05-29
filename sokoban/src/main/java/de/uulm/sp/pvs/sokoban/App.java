@@ -19,8 +19,9 @@ public class App {
 	 */
 	private static char[] movementKeys = NWSE;
 
-	public static void main(String[] args) throws IOException {
-		char[][] board = SokobanBoards.getDefaultBoard();
+	public static void main(String[] args) throws IOException, InvalidFileException {
+		SokobanLevel level = new SokobanLevel("test_level.xml");
+		char[][] board =level.board;
 		playLevel(board);
 	}
 

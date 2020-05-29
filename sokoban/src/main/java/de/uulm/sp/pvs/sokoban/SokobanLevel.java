@@ -40,24 +40,20 @@ public class SokobanLevel {
         // load XML
         var domRoot = loadLevelFromXML(validator, pathToXML);
         // parse the XML
-        try {
-            difficulty = Difficulty.valueOf(domRoot.getElementsByTagName("Difficulty").item(0).getTextContent());
-            final var authorList = domRoot.getElementsByTagName("Author");
-            for (int i = 0; i < authorList.getLength(); authors.add(authorList.item(i++).getTextContent())) {
-            }
-            name = domRoot.getElementsByTagName("LevelName").item(0).getTextContent();
-            board = domNodeToBoard(domRoot.getElementsByTagName("LevelData").item(0));
-        } catch (Exception e) {
-            throw new InvalidFileException(
-                    pathToXML + " parsing Error occured. " + xsdFileName + " seems to be unsuitable.");
+        difficulty = Difficulty.valueOf(domRoot.getElementsByTagName("Difficulty").item(0).getTextContent());
+        final var authorList = domRoot.getElementsByTagName("Author");
+        for (int i = 0; i < authorList.getLength(); authors.add(authorList.item(i++).getTextContent())) {
         }
+        name = domRoot.getElementsByTagName("LevelName").item(0).getTextContent();
+        board = domNodeToBoard(domRoot.getElementsByTagName("LevelData").item(0));
     }
 
-    private char[][] domNodeToBoard(Node node) {
+    private char[][] domNodeToBoard(Node node) throws InvalidFileException {
         final int height = Integer.parseInt(node.getAttributes().getNamedItem("height").getTextContent());
         final int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getTextContent());
         final String cleanLevelString = node.getTextContent().replace("\n", "");
         final char[][] board = new char[height][width];
+        if (cleanLevelString.length()!=width*height) throw new InvalidFileException("width*height doesnt match String");
         for (int i = 0, h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 board[h][w] = cleanLevelString.charAt(i++);
@@ -66,10 +62,10 @@ public class SokobanLevel {
         return board;
     }
 
-    private Element loadLevelFromXML(Validator validator2, String pathToXML)
+    private Element loadLevelFromXML(Validator validator, String pathToXML)
             throws InvalidFileException, FileNotFoundException {
-        // TODO: validate
         try {
+            validator.validate(new StreamSource(pathToXML));
             return DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().parse(pathToXML)
                     .getDocumentElement();
         } catch (SAXException e) {
