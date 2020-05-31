@@ -58,7 +58,7 @@ public class App {
 					loadLevel(lineReader.readLine());
 					printBoardAndAskForInput();
 				} catch (Exception e) {
-					System.err.printf("Error loading File: %s\n",e);
+					System.err.printf("Error loading File: %s\n", e);
 					printAskForInput();
 				}
 				continue;
@@ -116,7 +116,7 @@ public class App {
 	}
 
 	static void printAskForInput() {
-		System.out.printf("Where do you want to go? (%s/%s/%s/%s or %c to exit): ", movementKeys[0], movementKeys[1],
-				movementKeys[2], movementKeys[3], EXIT_KEY);
+		System.out.printf("Where do you want to go? (%s/%s/%s/%s to move, %c to load map, %c to exit): ",
+				movementKeys[0], movementKeys[1], movementKeys[2], movementKeys[3], LOAD_MAP_KEY, EXIT_KEY);
 	}
 }
