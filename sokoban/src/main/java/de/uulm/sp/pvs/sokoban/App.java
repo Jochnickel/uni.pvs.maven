@@ -25,8 +25,19 @@ public class App {
 	private static SokobanLevel currentLevel;
 
 	public static void main(final String[] args) throws IOException, InvalidFileException {
+		askForString("Enter your Name: ");
 		loadLevel("test_level.xml");
 		playLevel();
+	}
+
+	private static void askForString(String string) throws IOException {
+		final Terminal terminal = TerminalBuilder.terminal();
+		terminal.enterRawMode();
+		final var reader = terminal.reader();
+		while (true) {
+			var read = reader.read();
+			System.out.println(read);
+		}
 	}
 
 	private static void loadLevel(String levelFile) throws FileNotFoundException, InvalidFileException {

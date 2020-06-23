@@ -19,8 +19,8 @@ public class SokobanUtils {
 
 	/**
 	 * 
-	 * @param dirPath folder with multiple Sokoban_level.xml files
-	 * @return List<> of created Sokobanlevels
+	 * @param dirPath folder with multiple Sokoban_level *.xml files
+	 * @return List<SokobanLevel> of created Sokobanlevels
 	 */
 	public static List<SokobanLevel> loadLevels(final String dirPath)
 			throws FileNotFoundException, InvalidFileException {
