@@ -27,9 +27,6 @@ public class App {
 	private static SokobanLevel currentLevel;
 
 	public static void main(final String[] args) throws IOException, InvalidFileException {
-		final Terminal terminal = TerminalBuilder.terminal();
-		terminal.enterRawMode();
-		final var reader = terminal.reader();
 
 		System.out.println("Hallo, " + askForString(reader, "Enter your Name: "));
 		
@@ -38,11 +35,14 @@ public class App {
 		playLevel(reader);
 	}
 
-	private static SokobanLevel askForLevelFromDir(final NonBlockingReader reader, String levelsPath ){
+	private static SokobanLevel askForLevelFromDir(final String levelsPath){
 
 	}
 
-	private static String askForString(final NonBlockingReader reader, final String question) throws IOException {
+	private static String askForString(final String question) throws IOException {
+		final Terminal terminal = TerminalBuilder.terminal();
+		terminal.enterRawMode();
+		final var reader = terminal.reader();
 		var out = "";
 		System.out.print(question);
 		while (true) {
@@ -64,7 +64,10 @@ public class App {
 		currentLevel = new SokobanLevel(levelFile);
 	}
 
-	static void playLevel(final NonBlockingReader reader) throws IOException {
+	static void playLevel() throws IOException {
+		final Terminal terminal = TerminalBuilder.terminal();
+		terminal.enterRawMode();
+		final var reader = terminal.reader();
 		printBoardAndAskForInput();
 		for (char read = Character.toUpperCase((char) reader.read());; read = Character
 				.toUpperCase((char) reader.read())) {
