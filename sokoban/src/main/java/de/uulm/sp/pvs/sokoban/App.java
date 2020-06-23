@@ -7,8 +7,10 @@ import java.util.Objects;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.NonBlockingReader;
 
 import de.uulm.sp.pvs.util.Sokoban;
+import de.uulm.sp.pvs.util.SokobanUtils;
 
 public class App {
 
@@ -25,29 +27,44 @@ public class App {
 	private static SokobanLevel currentLevel;
 
 	public static void main(final String[] args) throws IOException, InvalidFileException {
-		askForString("Enter your Name: ");
-		loadLevel("test_level.xml");
-		playLevel();
-	}
-
-	private static void askForString(String string) throws IOException {
 		final Terminal terminal = TerminalBuilder.terminal();
 		terminal.enterRawMode();
 		final var reader = terminal.reader();
-		while (true) {
-			var read = reader.read();
-			System.out.println(read);
-		}
+
+		System.out.println("Hallo, " + askForString(reader, "Enter your Name: "));
+		
+
+		loadLevel("test_level.xml");
+		playLevel(reader);
 	}
 
-	private static void loadLevel(String levelFile) throws FileNotFoundException, InvalidFileException {
+	private static SokobanLevel askForLevelFromDir(final NonBlockingReader reader, String levelsPath ){
+
+	}
+
+	private static String askForString(final NonBlockingReader reader, final String question) throws IOException {
+		var out = "";
+		System.out.print(question);
+		while (true) {
+			final var r = reader.read();
+			if (13 /* Enter */ == r) {
+				System.out.println();
+				break;
+			} else if (4 /* Ctrl+D */ == r) {
+				return null;
+			} else {
+				out += ((char) r);
+				System.out.print((char) r);
+			}
+		}
+		return out;
+	}
+
+	private static void loadLevel(final String levelFile) throws FileNotFoundException, InvalidFileException {
 		currentLevel = new SokobanLevel(levelFile);
 	}
 
-	static void playLevel() throws IOException {
-		final Terminal terminal = TerminalBuilder.terminal();
-		terminal.enterRawMode();
-		final var reader = terminal.reader();
+	static void playLevel(final NonBlockingReader reader) throws IOException {
 		printBoardAndAskForInput();
 		for (char read = Character.toUpperCase((char) reader.read());; read = Character
 				.toUpperCase((char) reader.read())) {
@@ -68,7 +85,7 @@ public class App {
 					System.out.print("Enter file name to load: ");
 					loadLevel(lineReader.readLine());
 					printBoardAndAskForInput();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					System.err.printf("Error loading File: %s\n", e);
 					printAskForInput();
 				}
