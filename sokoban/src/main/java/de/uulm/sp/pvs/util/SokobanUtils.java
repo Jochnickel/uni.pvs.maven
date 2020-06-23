@@ -34,7 +34,7 @@ public class SokobanUtils {
 				try {
 					list.add(new SokobanLevel(fName.toString()));
 				} catch (FileNotFoundException | InvalidFileException e) {
-					System.out.printf("Didn't add %s\n", fName.toString());
+					System.out.printf("Didn't add %s (%s)\n", fName.toString(), e.getMessage());
 				}
 			});
 		} catch (IOException e) {

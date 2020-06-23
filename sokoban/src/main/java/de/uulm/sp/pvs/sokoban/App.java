@@ -27,45 +27,42 @@ public class App {
 	private static SokobanLevel currentLevel;
 
 	public static void main(final String[] args) throws IOException, InvalidFileException {
-
-		System.out.println("Hallo, " + askForString(reader, "Enter your Name: "));
-		
-
-		loadLevel("test_level.xml");
-		playLevel(reader);
-	}
-
-	private static SokobanLevel askForLevelFromDir(final String levelsPath){
-
-	}
-
-	private static String askForString(final String question) throws IOException {
 		final Terminal terminal = TerminalBuilder.terminal();
-		terminal.enterRawMode();
-		final var reader = terminal.reader();
-		var out = "";
-		System.out.print(question);
-		while (true) {
-			final var r = reader.read();
-			if (13 /* Enter */ == r) {
-				System.out.println();
-				break;
-			} else if (4 /* Ctrl+D */ == r) {
-				return null;
-			} else {
-				out += ((char) r);
-				System.out.print((char) r);
-			}
+		System.out.println("Hallo, " + askForString(terminal, "Enter your Name: "));
+		do {
+			currentLevel = askForLevelFromDir(terminal, "/mnt/d/Uni/pvs/Blatt09");
+		} while (null == currentLevel);
+		// loadLevel("test_level.xml");
+		playLevel(terminal);
+	}
+
+	private static SokobanLevel askForLevelFromDir(final Terminal terminal, final String levelsPath)
+			throws IOException, InvalidFileException {
+		final var levelList = SokobanUtils.loadLevels(levelsPath);
+		final var lineReader = new LineReaderImpl(terminal); // doenst need to close??
+		System.out.printf("There are %d levels:\n", levelList.size());
+		for (int i = 0; i < levelList.size(); i++) {
+			System.out.printf("(%d) (%s) %s\n", i + 1, levelList.get(i).difficulty, levelList.get(i).name);
 		}
-		return out;
+		System.out.printf("Choose one: ");
+		try {
+			return levelList.get(Integer.parseInt(lineReader.readLine()) - 1);
+		} catch (NumberFormatException | IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
+	private static String askForString(final Terminal terminal, final String question) throws IOException {
+		final var lineReader = new LineReaderImpl(terminal); // doenst need to close??
+		System.out.print(question);
+		return lineReader.readLine();
 	}
 
 	private static void loadLevel(final String levelFile) throws FileNotFoundException, InvalidFileException {
 		currentLevel = new SokobanLevel(levelFile);
 	}
 
-	static void playLevel() throws IOException {
-		final Terminal terminal = TerminalBuilder.terminal();
+	static void playLevel(final Terminal terminal) throws IOException {
 		terminal.enterRawMode();
 		final var reader = terminal.reader();
 		printBoardAndAskForInput();
