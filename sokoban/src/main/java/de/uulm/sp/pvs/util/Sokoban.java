@@ -40,6 +40,14 @@ public class Sokoban {
 		System.out.println(sokobanToString(sokoban));
 	}
 
+	public static boolean noBoxesLeft(char[][] board) {
+		for (char[] row : board)			{
+			for (char field : row)			{
+				if (BOX_FIELD == field)		{
+					return false;			}}}
+		return true;
+	}
+
 	public static Pair<Integer, Integer> findPlayer(char[][] board) {
 		for (int y = board.length - 1; y > 0; y--) {
 			for (int x = board[y].length - 1; x > 0; x--) {

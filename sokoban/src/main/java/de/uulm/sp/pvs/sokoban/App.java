@@ -32,8 +32,10 @@ public class App {
 		do {
 			currentLevel = askForLevelFromDir(terminal, "/mnt/d/Uni/pvs/Blatt09");
 		} while (null == currentLevel);
-		// loadLevel("test_level.xml");
-		playLevel(terminal);
+		try {
+			playLevel(terminal);
+		} catch (LevelDoneException e) {
+		}
 	}
 
 	private static SokobanLevel askForLevelFromDir(final Terminal terminal, final String levelsPath)
@@ -62,7 +64,7 @@ public class App {
 		currentLevel = new SokobanLevel(levelFile);
 	}
 
-	static void playLevel(final Terminal terminal) throws IOException {
+	static void playLevel(final Terminal terminal) throws IOException, LevelDoneException {
 		terminal.enterRawMode();
 		final var reader = terminal.reader();
 		printBoardAndAskForInput();
@@ -140,6 +142,9 @@ public class App {
 		System.out.print("\033[H\033[2J");
 		System.out.flush();
 		System.out.printf("Current Board:\n\n%s\n", Sokoban.sokobanToString(currentLevel.board));
+		if (Sokoban.noBoxesLeft(currentLevel.board)) {
+			throw new LevelDoneException();
+		}
 		printAskForInput();
 	}
 
