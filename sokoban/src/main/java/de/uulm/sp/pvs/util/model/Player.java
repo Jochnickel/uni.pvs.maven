@@ -1,6 +1,11 @@
 package de.uulm.sp.pvs.util.model;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +35,7 @@ public class Player {
 		return games_won;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.player_name = name;
 	}
 
@@ -42,4 +47,86 @@ public class Player {
 	public void incrementLost() {
 		++this.games_played;
 	}
+	
+	private static List<Player> selectAllPlayers(final EntityManager em) {
+		return em.createQuery("select p from Player p").getResultList();
+	}
+
+	/**
+	 * 
+	 * @param em EntityManager
+	 * @param name any name to be searched
+	 * @return if the name was found
+	 */
+	public static boolean doesPlayerExist(final EntityManager em, final String name) {
+		for (final Player player : selectAllPlayers(em)) {
+			if (Objects.equals(player.getPlayerName(), name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param em EntityManager
+	 * @param name the players name to get the id from
+	 * @return playerID as int
+	 * @throws IllegalArgumentException
+	 */
+	public static int getPlayerId(final EntityManager em, final String name) {
+		for (final Player player : selectAllPlayers(em)) {
+			if (Objects.equals(player.getPlayerName(), name)) {
+				return player.getPlayerId();
+			}
+		}
+		throw new IllegalArgumentException();
+	}
+
+	/**
+	 * 
+	 * @param em EntityManager
+	 * @param name the name of the new player
+	 */
+	public static void createPlayer(final EntityManager em, final String name) {
+		em.getTransaction().begin();
+		final Player player = new Player();
+		player.setName(name);
+		em.persist(player);
+		em.getTransaction().commit();
+	}
+
+	/**
+	 * @param em EntityManager
+	 * @param playerId the player to add the won game to
+	 */
+	public static void playerWon(final EntityManager em, final int playerId) {
+		em.getTransaction().begin();
+		for (final Player player : selectAllPlayers(em)) {
+			if (playerId == player.getPlayerId()) {
+				player.incrementWon();
+				em.persist(player);
+				break;
+			}
+		}
+		em.getTransaction().commit();
+	}
+
+	/**
+	 * 
+	 * @param em EntityManager
+	 * @param playerId the player to add the lost game to
+	 */
+	public static void playerLost(final EntityManager em, final int playerId) {
+		em.getTransaction().begin();
+		for (final Player player : selectAllPlayers(em)) {
+			if (playerId == player.getPlayerId()) {
+				player.incrementLost();
+				em.persist(player);
+				break;
+			}
+		}
+		em.getTransaction().commit();
+
+	}
+
 }
