@@ -13,6 +13,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -31,13 +32,13 @@ public class SokobanLevel {
         System.out.println(a);
     }
 
-    public SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException {
+    public SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException, ValidationFileNotFoundException {
         // load XSD
         try {
             validator = loadValidator();
         } catch (FileNotFoundException | InvalidFileException e) {
             if (null == validator) {
-                throw e;
+                throw new ValidationFileNotFoundException();
             } else {
                 System.err.printf("Error reading %s again. Using known validator\n", xsdFileName);
             }

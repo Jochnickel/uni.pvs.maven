@@ -11,6 +11,7 @@ import java.util.List;
 
 import de.uulm.sp.pvs.sokoban.InvalidFileException;
 import de.uulm.sp.pvs.sokoban.SokobanLevel;
+import de.uulm.sp.pvs.sokoban.ValidationFileNotFoundException;
 
 public class SokobanUtils {
 	public static void main(final String[] args) throws Exception {
@@ -23,7 +24,7 @@ public class SokobanUtils {
 	 * @return List<SokobanLevel> of created Sokobanlevels
 	 */
 	public static List<SokobanLevel> loadLevels(final String dirPath)
-			throws FileNotFoundException, InvalidFileException {
+			throws FileNotFoundException, InvalidFileException, ValidationFileNotFoundException {
 		final var asd = Paths.get(dirPath);
 		if (Files.notExists(asd)) {
 			throw new FileNotFoundException();

@@ -39,7 +39,7 @@ public class App {
 	}
 
 	private static SokobanLevel askForLevelFromDir(final Terminal terminal, final String levelsPath)
-			throws IOException, InvalidFileException {
+			throws IOException, InvalidFileException, ValidationFileNotFoundException {
 		final var levelList = SokobanUtils.loadLevels(levelsPath);
 		final var lineReader = new LineReaderImpl(terminal); // doenst need to close??
 		System.out.printf("There are %d levels:\n", levelList.size());
