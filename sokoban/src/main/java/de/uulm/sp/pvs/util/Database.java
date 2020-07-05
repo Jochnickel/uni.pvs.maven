@@ -7,7 +7,7 @@ import javax.persistence.Persistence;
 import de.uulm.sp.pvs.util.model.Game;
 import de.uulm.sp.pvs.util.model.Player;
 
-class Database {
+public class Database {
 	private static final String PERSISTENCE_UNIT_NAME = "sokoban";
 	private final static EntityManagerFactory factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 	private final static EntityManager em = factory.createEntityManager();

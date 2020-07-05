@@ -4,11 +4,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
+import javax.xml.crypto.Data;
+
+import org.eclipse.persistence.jpa.jpql.parser.ExistsExpression;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 // import org.jline.utils.NonBlockingReader;
 
+import de.uulm.sp.pvs.util.Database;
 import de.uulm.sp.pvs.util.Sokoban;
 import de.uulm.sp.pvs.util.SokobanUtils;
 
@@ -27,14 +31,32 @@ public class App {
 	private static SokobanLevel currentLevel;
 
 	public static void main(final String[] args) throws IOException, InvalidFileException {
-		final Terminal terminal = TerminalBuilder.terminal();
-		System.out.println("Hallo, " + askForString(terminal, "Enter your Name: "));
-		do {
-			currentLevel = askForLevelFromDir(terminal, "./");
-		} while (null == currentLevel);
 		try {
-			playLevel(terminal);
-		} catch (LevelDoneException e) {
+			final Terminal terminal = TerminalBuilder.terminal();
+			final var name = askForString(terminal, "Enter your Name: ");
+			System.out.println("Hallo, " + name);
+			for (;;) {
+				while (null == currentLevel) {
+					currentLevel = askForLevelFromDir(terminal, "./");
+				}
+				try {
+					playLevel(terminal);
+				} catch (LevelDoneException e) {
+					if (!Database.doesPlayerExist(name)) {
+						Database.createPlayer(name);
+					}
+					try {
+						Database.addGame(currentLevel.name, true, Database.getPlayerId(name));
+					} catch (Exception e1) {
+						System.err.println("Game already exists");
+					}
+					currentLevel = null;
+				}
+			}
+		} catch (ValidationFileNotFoundException e) {
+			System.err.printf("Couldn't load validation file (%s)\n", e.getMessage());
+		} catch (ExitGameException e) {
+			System.out.println("Leaving game");
 		}
 	}
 

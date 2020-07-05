@@ -38,7 +38,7 @@ public class SokobanLevel {
             validator = loadValidator();
         } catch (FileNotFoundException | InvalidFileException e) {
             if (null == validator) {
-                throw new ValidationFileNotFoundException();
+                throw new ValidationFileNotFoundException(e.getMessage());
             } else {
                 System.err.printf("Error reading %s again. Using known validator\n", xsdFileName);
             }
