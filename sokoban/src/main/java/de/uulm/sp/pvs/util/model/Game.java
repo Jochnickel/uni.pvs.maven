@@ -13,6 +13,7 @@ import javax.persistence.IdClass;
 public class Game {
 	@Id
 	private String level_name;
+	@Id
 	private Timestamp date;
 	private boolean won;
 	@Id
