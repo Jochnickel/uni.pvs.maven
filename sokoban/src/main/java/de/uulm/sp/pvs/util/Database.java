@@ -19,8 +19,9 @@ class Database {
 	 * Test function
 	 * 
 	 * @param args
+	 * @throws Exception
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws Exception {
 		System.out.println("\n>> Showcase Database:");
 		final Database d = new Database();
 		Player.createPlayer(d.em, "name");
@@ -28,6 +29,7 @@ class Database {
 		System.out.println(Player.doesPlayerExist(d.em, "name"));
 		Player.printPlayers(em);
 
+		Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
 		Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
 		Game.printGames(em);
 	}
