@@ -48,7 +48,7 @@ public class App {
 					try {
 						Database.addGame(currentLevel.name, true, Database.getPlayerId(name));
 					} catch (Exception e1) {
-						System.err.println("Game already exists");
+						System.err.println("\nERROR: Game already exists\n");
 					}
 					currentLevel = null;
 				}
