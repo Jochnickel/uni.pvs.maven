@@ -28,7 +28,40 @@ class Database {
 		Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
 		// Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
 		Game.printGames(em);
+
 		em.close();
+	}
+
+	public static boolean doesPlayerExist(String name) {
+		return Player.doesPlayerExist(em, name);
+	}
+
+	public static int getPlayerId(String name) {
+		return Player.getPlayerId(em, name);
+	}
+
+	public static void createPlayer(String name) {
+		Player.createPlayer(em, name);
+	}
+
+	public static void playerWon(int playerId) {
+		Player.playerWon(em, playerId);
+	}
+
+	public static void playerLost(int playerId) {
+		Player.playerLost(em, playerId);
+	}
+
+	public static void addGame(String levelName, boolean won, int playerId) throws Exception {
+		Game.addGame(em, levelName, won, playerId);
+	}
+
+	public static void printPlayers() {
+		Player.printPlayers(em);
+	}
+
+	public static void printGames() {
+		Game.printGames(em);
 	}
 
 }

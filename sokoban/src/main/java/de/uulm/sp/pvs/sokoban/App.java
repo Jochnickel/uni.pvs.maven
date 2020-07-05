@@ -30,7 +30,7 @@ public class App {
 		final Terminal terminal = TerminalBuilder.terminal();
 		System.out.println("Hallo, " + askForString(terminal, "Enter your Name: "));
 		do {
-			currentLevel = askForLevelFromDir(terminal, "/mnt/d/Uni/pvs/Blatt09");
+			currentLevel = askForLevelFromDir(terminal, "./");
 		} while (null == currentLevel);
 		try {
 			playLevel(terminal);
