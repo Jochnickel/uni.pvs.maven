@@ -52,7 +52,7 @@ public class Database {
 		Player.playerLost(em, playerId);
 	}
 
-	public static void addGame(String levelName, boolean won, int playerId) throws Exception {
+	public static void addGame(String levelName, boolean won, int playerId) {
 		Game.addGame(em, levelName, won, playerId);
 	}
 

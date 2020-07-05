@@ -56,7 +56,7 @@ public class Game {
 	 * @param won
 	 * @param playerId
 	 */
-	public static void addGame(final EntityManager em, final String levelName, final boolean won, final int playerId) throws Exception {
+	public static void addGame(final EntityManager em, final String levelName, final boolean won, final int playerId){
 		em.getTransaction().begin();
 		final Game game = new Game();
 		game.setLevelName(levelName);

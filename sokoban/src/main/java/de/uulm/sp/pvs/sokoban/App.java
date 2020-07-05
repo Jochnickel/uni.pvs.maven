@@ -45,11 +45,7 @@ public class App {
 					if (!Database.doesPlayerExist(name)) {
 						Database.createPlayer(name);
 					}
-					try {
-						Database.addGame(currentLevel.name, true, Database.getPlayerId(name));
-					} catch (Exception e1) {
-						System.err.println("\nERROR: Game record already exists in database\n");
-					}
+					Database.addGame(currentLevel.name, true, Database.getPlayerId(name));
 					currentLevel = null;
 				}
 			}
