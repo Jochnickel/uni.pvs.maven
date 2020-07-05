@@ -11,33 +11,29 @@ import de.uulm.sp.pvs.util.model.Player;
 
 class Database {
 	private static final String PERSISTENCE_UNIT_NAME = "sokoban";
-	private static EntityManagerFactory factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-	private static EntityManager em = factory.createEntityManager();
-
+	private final static EntityManagerFactory factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+	private final static EntityManager em = factory.createEntityManager();
 
 	/**
 	 * Test function
+	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		System.out.println(">> Showcase Database:");
-		System.out.println("Creating Player");
-		Database d = new Database();
-		// d.createPlayer("Hanss");
-		Player p = new Player();
-		System.out.println(p.getPlayerId());
+		final Database d = new Database();
+		System.out.println(d.doesPlayerExist("name"));
 	}
-
 
 	/**
 	 * 
 	 * @param name
 	 * @return
 	 */
-	public boolean doesPlayerExist(String name){
-		List<Player> playerList = em.createQuery("select * from players").getResultList();
-		for (Player player : playerList) {
-			if (Objects.equals(player.getPlayerName(), name)){
+	public boolean doesPlayerExist(final String name) {
+		final List<Player> playerList = em.createQuery("select * from players").getResultList();
+		for (final Player player : playerList) {
+			if (Objects.equals(player.getPlayerName(), name)) {
 				return true;
 			}
 		}
@@ -49,38 +45,50 @@ class Database {
 	 * @return playerID as int
 	 * @throws IllegalArgumentException
 	 */
-	public int getPlayerId(String name){
-		List<Player> playerList = em.createQuery("select * from players").getResultList();
-		for (Player player : playerList) {
-			if (Objects.equals(player.getPlayerName(), name)){
+	public int getPlayerId(final String name) {
+		final List<Player> playerList = em.createQuery("select * from players").getResultList();
+		for (final Player player : playerList) {
+			if (Objects.equals(player.getPlayerName(), name)) {
 				return player.getPlayerId();
 			}
 		}
 		throw new IllegalArgumentException();
 	}
 
-
-	public void createPlayer(String name){
+	/**
+	 * 
+	 * @param name
+	 */
+	public void createPlayer(final String name) {
 		em.getTransaction().begin();
-		Player player = new Player();
+		final Player player = new Player();
+		player.setName(name);
+		em.persist(player);
+		em.getTransaction().commit();
+	}
+
+	/**
+	 * @param playerId 
+	 */
+	public void playerWon(final int playerId) {
+		em.getTransaction().begin();
+		final List<Player> allPlayers = em.createQuery("select * from players").getResultList();
+		for (final Player player : allPlayers) {
+			if(playerId==player.getPlayerId()){
+				player.incrementWon();
+				em.persist(player);
+				break;
+			}
+		}
+		em.getTransaction().commit();
+	}
+
+	public void playerLost(final int playerId) {
 
 	}
 
-
-	public void playerWon(int playerId){
-
-	}
-
-
-	public void playerLost(int playerId){
+	public void addGame(final String levelName, final boolean won, final int playerId) {
 
 	}
 
-
-    public void addGame(String levelName, boolean won, int playerId){
-
-	}
-	
-
-	
 }

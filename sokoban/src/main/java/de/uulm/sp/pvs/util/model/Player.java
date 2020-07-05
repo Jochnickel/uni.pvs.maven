@@ -11,14 +11,8 @@ public class Player {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int player_id;
 	private String player_name;
-	private int games_played;
-	private int games_won;
-
-	// public Player(String name) {
-	// 	this.player_name = name;
-	// 	this.games_won = 0;
-	// 	this.games_played = 0;
-	// }
+	private int games_played = 0;
+	private int games_won = 0;
 
 	public String getPlayerName() {
 		return player_name;
@@ -38,5 +32,14 @@ public class Player {
 
 	public void setName(String name) {
 		this.player_name = name;
+	}
+
+	public void incrementWon() {
+		++this.games_won;
+		++this.games_played;
+	}
+
+	public void incrementLost() {
+		++this.games_played;
 	}
 }
