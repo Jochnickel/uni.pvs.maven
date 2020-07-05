@@ -25,13 +25,14 @@ class Database {
 		System.out.println("\n>> Showcase Database:");
 		final Database d = new Database();
 		Player.createPlayer(d.em, "name");
-		Player.createPlayer(d.em, "name");
+		// Player.createPlayer(d.em, "name");
 		System.out.println(Player.doesPlayerExist(d.em, "name"));
 		Player.printPlayers(em);
 
 		Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
-		Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
+		// Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
 		Game.printGames(em);
+		em.close();
 	}
 
 }
