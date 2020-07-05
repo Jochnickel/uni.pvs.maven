@@ -28,6 +28,7 @@ public class SokobanLevel {
 
     public static void main(String[] args) throws FileNotFoundException, InvalidFileException {
         var a = new SokobanLevel("Sokoban-B.xml");
+        System.out.println(a);
     }
 
     public SokobanLevel(String pathToXML) throws FileNotFoundException, InvalidFileException {

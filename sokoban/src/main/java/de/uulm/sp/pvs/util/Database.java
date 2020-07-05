@@ -1,8 +1,5 @@
 package de.uulm.sp.pvs.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -23,10 +20,9 @@ class Database {
 	 */
 	public static void main(final String[] args) throws Exception {
 		System.out.println("\n>> Showcase Database:");
-		final Database d = new Database();
-		Player.createPlayer(d.em, "name");
+		Player.createPlayer(em, "name");
 		// Player.createPlayer(d.em, "name");
-		System.out.println(Player.doesPlayerExist(d.em, "name"));
+		System.out.println(Player.doesPlayerExist(em, "name"));
 		Player.printPlayers(em);
 
 		Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));

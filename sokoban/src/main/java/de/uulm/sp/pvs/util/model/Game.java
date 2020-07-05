@@ -66,6 +66,8 @@ public class Game {
 		em.getTransaction().commit();
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	public static void printGames(final EntityManager em) {
 		em.createQuery("select g from Game g").getResultList().forEach(g -> System.out.println(g));
 	}

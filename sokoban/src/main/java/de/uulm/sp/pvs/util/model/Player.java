@@ -1,6 +1,5 @@
 package de.uulm.sp.pvs.util.model;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,7 +52,7 @@ public class Player {
 	public void incrementLost() {
 		++this.games_played;
 	}
-
+	@SuppressWarnings("unchecked")
 	private static List<Player> selectAllPlayers(final EntityManager em) {
 		return em.createQuery("select p from Player p").getResultList();
 	}
