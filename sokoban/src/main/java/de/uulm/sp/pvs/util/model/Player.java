@@ -19,6 +19,12 @@ public class Player {
 	private int games_played = 0;
 	private int games_won = 0;
 
+	@Override
+	public String toString() {
+		return String.format("(Player){player_id : %d, player_name : \"%s\", games_played : %d, games_won: %d}",
+				player_id, player_name, games_played, games_won);
+	}
+
 	public String getPlayerName() {
 		return player_name;
 	}
@@ -47,14 +53,14 @@ public class Player {
 	public void incrementLost() {
 		++this.games_played;
 	}
-	
+
 	private static List<Player> selectAllPlayers(final EntityManager em) {
 		return em.createQuery("select p from Player p").getResultList();
 	}
 
 	/**
 	 * 
-	 * @param em EntityManager
+	 * @param em   EntityManager
 	 * @param name any name to be searched
 	 * @return if the name was found
 	 */
@@ -68,7 +74,7 @@ public class Player {
 	}
 
 	/**
-	 * @param em EntityManager
+	 * @param em   EntityManager
 	 * @param name the players name to get the id from
 	 * @return playerID as int
 	 * @throws IllegalArgumentException
@@ -84,7 +90,7 @@ public class Player {
 
 	/**
 	 * 
-	 * @param em EntityManager
+	 * @param em   EntityManager
 	 * @param name the name of the new player
 	 */
 	public static void createPlayer(final EntityManager em, final String name) {
@@ -96,7 +102,7 @@ public class Player {
 	}
 
 	/**
-	 * @param em EntityManager
+	 * @param em       EntityManager
 	 * @param playerId the player to add the won game to
 	 */
 	public static void playerWon(final EntityManager em, final int playerId) {
@@ -113,7 +119,7 @@ public class Player {
 
 	/**
 	 * 
-	 * @param em EntityManager
+	 * @param em       EntityManager
 	 * @param playerId the player to add the lost game to
 	 */
 	public static void playerLost(final EntityManager em, final int playerId) {
@@ -127,6 +133,15 @@ public class Player {
 		}
 		em.getTransaction().commit();
 
+	}
+
+	/**
+	 * prints out the List of players
+	 * 
+	 * @param em EntityManager
+	 */
+	public static void printPlayers(EntityManager em) {
+		selectAllPlayers(em).forEach(p -> System.out.println(p));
 	}
 
 }

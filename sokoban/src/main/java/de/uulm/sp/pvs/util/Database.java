@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import de.uulm.sp.pvs.util.model.Game;
 import de.uulm.sp.pvs.util.model.Player;
 
 class Database {
@@ -20,21 +21,15 @@ class Database {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		List<Player> asd = new ArrayList<Player>();
-		List<?> fkg = asd;
-		System.out.println(asd);
-		// List<Player> ok = fkg;
-
-
-		fkg.add(null);
-		// ok.add(null);
-
-
-
 		System.out.println("\n>> Showcase Database:");
 		final Database d = new Database();
 		Player.createPlayer(d.em, "name");
+		Player.createPlayer(d.em, "name");
 		System.out.println(Player.doesPlayerExist(d.em, "name"));
+		Player.printPlayers(em);
+
+		Game.addGame(em, "levelName", true, Player.getPlayerId(em, "name"));
+		Game.printGames(em);
 	}
 
 }

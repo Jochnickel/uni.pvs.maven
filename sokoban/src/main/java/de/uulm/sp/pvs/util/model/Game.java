@@ -1,6 +1,7 @@
 package de.uulm.sp.pvs.util.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -16,6 +17,12 @@ public class Game {
 	private boolean won;
 	@Id
 	private int player_id;
+
+	@Override
+	public String toString() {
+		return String.format("(Game){level_name:\"%s\", date:%s, won:%b, player_id:%d}", level_name, date, won,
+				player_id);
+	}
 
 	public void setLevelName(final String levelName) {
 		this.level_name = levelName;
@@ -41,7 +48,6 @@ public class Game {
 		this.player_id = playerId;
 	}
 
-
 	/**
 	 * 
 	 * @param em
@@ -55,8 +61,13 @@ public class Game {
 		game.setLevelName(levelName);
 		game.setWon(won);
 		game.setPlayerId(playerId);
+		game.setDate(Timestamp.valueOf(LocalDateTime.now()));
 		em.persist(game);
 		em.getTransaction().commit();
+	}
+
+	public static void printGames(final EntityManager em) {
+		em.createQuery("select g from Game g").getResultList().forEach(g -> System.out.println(g));
 	}
 
 }
