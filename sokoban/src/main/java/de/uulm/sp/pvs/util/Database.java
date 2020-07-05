@@ -3,6 +3,9 @@ package de.uulm.sp.pvs.util;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 import de.uulm.sp.pvs.util.model.Player;
 
