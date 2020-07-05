@@ -48,7 +48,7 @@ public class App {
 					try {
 						Database.addGame(currentLevel.name, true, Database.getPlayerId(name));
 					} catch (Exception e1) {
-						System.err.println("\nERROR: Game already exists\n");
+						System.err.println("\nERROR: Game record already exists in database\n");
 					}
 					currentLevel = null;
 				}
@@ -96,7 +96,7 @@ public class App {
 				continue;
 			System.out.println(read);
 			if (EXIT_KEY == read) {
-				return;
+				throw new ExitGameException();
 			}
 			if (TOGGLE_KEY == read) {
 				toggleControls();
